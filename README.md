@@ -8,19 +8,22 @@
 
 Volume, mute, and now-playing feedback in a quiet surface that expands, settles, and gets out of the way. Repeated volume changes update one display. Playing music stays compact; controls unfold when you need them.
 
-**Early development preview.** Tested in isolated GNOME Shell **50.1** sessions on Ubuntu **26.04.1 / Wayland**. Physical keyboard, audio-device, mixed-DPI, and real lock-screen testing are still pending. This is a native GJS extension, with a separate browser rehearsal for motion design. It has not been reviewed for extensions.gnome.org.
+**Early 0.x release.** Tested in isolated GNOME Shell **50.1** sessions on Ubuntu **26.04.1 / Wayland**. Physical keyboard, audio-device, mixed-DPI, and real lock-screen testing are still pending. This is a native GJS extension, with a separate browser rehearsal for motion design. It has not been reviewed for extensions.gnome.org.
 
 The clip is an actual GNOME capture at its recorded speed, using test inputs and test media. It demonstrates behavior, not long-term stability. [Close-up motion](assets/liquid-closeup.mp4) · [24-second introduction](assets/lilt-intro.mp4) · [Unedited 18-second capture](assets/native-source.mp4) · [Static image](assets/hero.png) · [Preferences](assets/native-preferences.png)
 
-## Try the preview
+## Install 0.3.0
 
-Review the [tested scope](docs/VALIDATION.md) first. The Ubuntu package targets GNOME 50 only. With a downloaded `lilt.deb`, installation is:
+Download `lilt_0.3.0_all.deb` and `SHA256SUMS` from the [0.3.0 release](https://github.com/eggp-dev/lilt/releases/tag/v0.3.0). Review the [tested scope](docs/VALIDATION.md) first; the Ubuntu package targets GNOME 50 only. In the download directory:
 
 ```sh
-sudo apt install ./lilt.deb
+sha256sum --ignore-missing --check SHA256SUMS
+sudo apt install ./lilt_0.3.0_all.deb
 ```
 
-Then enable **Lilt** in GNOME Extensions. A first logout/login may be needed for GNOME to discover it. See [apt installation, updates, and removal](docs/DEBIAN.md). There is no Lilt APT repository yet; installing by package name alone and automatic repository updates are not available. The `.deb` can currently be built locally; a public binary release has not been published.
+Then enable **Lilt** in GNOME Extensions. A first logout/login may be needed for GNOME to discover it. See [apt installation, updates, and removal](docs/DEBIAN.md). There is no Lilt APT repository yet; installing by package name alone and automatic repository updates are not available. The checksums verify file bytes and are not signatures.
+
+The release also includes `lilt@eggp-dev.github.io.shell-extension.zip` for user-level installation. Choose one installation method; a user copy overrides a system package. GitHub's automatic **Source code** archives contain the repository and are different from the installable extension ZIP. See the [0.3.0 notes](docs/RELEASE-0.3.0.md) for changes, verification, and recovery.
 
 ### Build from source
 

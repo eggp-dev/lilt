@@ -36,7 +36,7 @@ The GTK preferences fixture adds **3 widget-binding checks** (spacing, duration,
 - [ ] High contrast, large text, screen reader, keyboard-only control, long/non-Latin metadata.
 - [ ] Maintainer review of source and current GNOME extension-review requirements.
 
-GNOME 51, X11, and other Linux desktops are not verified. The product remains a development preview.
+GNOME 51, X11, and other Linux desktops are not verified. This is an early 0.x release; publishing it does not establish production reliability.
 
 ## Published demonstration
 
@@ -44,7 +44,7 @@ The introduction is 24.000 seconds, 1920 × 1080, H.264, 30 fps (720 frames), wi
 
 ## Debian package
 
-The local `0.3.0~preview1` package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 40 native checks passed again. This does not count as 40 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.
+The `0.3.0` release package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 40 native checks passed again. This does not count as 40 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.
 
 ## Liquid contour in 0.3
 

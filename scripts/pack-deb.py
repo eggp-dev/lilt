@@ -13,14 +13,14 @@ import tempfile
 ROOT = Path(__file__).resolve().parent.parent
 PACKAGE = "gnome-shell-extension-lilt"
 UUID = "lilt@eggp-dev.github.io"
-VERSION = json.loads((ROOT / "package.json").read_text())["version"] + "~preview1"
+VERSION = json.loads((ROOT / "package.json").read_text())["version"]
 EPOCH = int(os.environ.get("SOURCE_DATE_EPOCH", "1791158400"))
 OUTPUT = ROOT / "dist" / "lilt.deb"
 
 
 def build():
     metadata = json.loads((ROOT / "extension/metadata.json").read_text())
-    if metadata["uuid"] != UUID or metadata["shell-version"] != ["50"]:
+    if metadata["uuid"] != UUID or metadata["shell-version"] != ["50"] or metadata.get("version-name") != VERSION:
         raise SystemExit("Review the package UUID and GNOME dependency bounds first.")
     subprocess.run(["dpkg", "--validate-version", VERSION], check=True)
     OUTPUT.parent.mkdir(exist_ok=True)
@@ -45,7 +45,8 @@ def build():
         shutil.copyfile(ROOT / "docs/DEBIAN.md", docs / "README.Debian")
         changelog = (
             f"{PACKAGE} ({VERSION}) unstable; urgency=low\n\n"
-            "  * Initial local development-preview package for GNOME 50.\n\n"
+            "  * Release liquid volume/mute and MPRIS surfaces for GNOME 50.\n"
+            "  * Include native preferences and reduced-motion support.\n\n"
             " -- Lilt contributors <noreply@github.com>  Mon, 05 Oct 2026 00:00:00 +0000\n"
         )
         (docs / "changelog.Debian.gz").write_bytes(gzip.compress(changelog.encode(), mtime=0))
@@ -62,7 +63,7 @@ def build():
             "Homepage: https://github.com/eggp-dev/lilt\n"
             "Description: floating volume and media surface for GNOME 50\n"
             " A native GNOME Shell extension for volume, mute and MPRIS feedback.\n"
-            " Development preview. Enable it separately in your GNOME session.\n"
+            " Early 0.x release. Enable it separately in your GNOME session.\n"
         )
         (control / "md5sums").write_text("".join(
             f"{hashlib.md5(p.read_bytes()).hexdigest()}  {p.relative_to(stage)}\n" for p in files

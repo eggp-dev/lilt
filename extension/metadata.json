@@ -1,7 +1,8 @@
 {
   "uuid": "lilt@eggp-dev.github.io",
   "name": "Lilt",
-  "description": "A quiet, fluid surface for volume and music. Development preview for GNOME 50.",
+  "description": "A quiet, fluid surface for volume and music. Early 0.x release for GNOME 50.",
+  "version-name": "0.3.0",
   "shell-version": [
     "50"
   ],
