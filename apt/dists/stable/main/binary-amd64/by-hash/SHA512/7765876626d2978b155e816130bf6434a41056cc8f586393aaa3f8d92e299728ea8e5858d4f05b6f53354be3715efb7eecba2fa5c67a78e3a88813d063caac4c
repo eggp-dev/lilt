@@ -1,0 +1,32 @@
+Package: gnome-shell-extension-lilt
+Version: 0.3.0
+Architecture: all
+Section: gnome
+Priority: optional
+Maintainer: Lilt contributors <noreply@github.com>
+Depends: gnome-shell (>= 50), gnome-shell (<< 51), gir1.2-adw-1 (>= 1.4), libglib2.0-bin
+Installed-Size: 55
+Homepage: https://github.com/eggp-dev/lilt
+Description: floating volume and media surface for GNOME 50
+ A native GNOME Shell extension for volume, mute and MPRIS feedback.
+ Early 0.x release. Enable it separately in your GNOME session.
+Filename: pool/main/l/lilt/gnome-shell-extension-lilt_0.3.0_all.deb
+Size: 15276
+SHA256: 3728922ae258154d6fe191df9551405ff5d19fcbc841c9a5f10b649ab32c9f2b
+SHA512: 211f0c84ae519ba869f7f5587ee50ede2585e852fb8ae9ed888b47acedc75265b618ce3e9e7740ec8ee6331aa5714146fcaad523de693ed86ad707ef93bd9a4b
+
+Package: lilt
+Version: 0.3.0
+Architecture: all
+Section: gnome
+Priority: optional
+Maintainer: Lilt contributors <noreply@github.com>
+Depends: gnome-shell-extension-lilt (= 0.3.0)
+Homepage: https://github.com/eggp-dev/lilt
+Description: install Lilt volume and media feedback for GNOME 50
+ A small package that follows the native GNOME Shell extension.
+Filename: pool/main/l/lilt/lilt_0.3.0_all.deb
+Size: 1556
+SHA256: 17a57365cff278fe875925a86e5b1ccf89e801a5de473d379fd4ef44a70aed7b
+SHA512: f63271898aec62dd93549235eb10df2cc60740ccb09cfde81d1819b8adfba520b045c777d22b2f8cb5a8806ae6daeaad778756daac7b96a61e82daf73f022b4a
+

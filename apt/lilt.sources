@@ -1,0 +1,6 @@
+Types: deb
+URIs: https://eggp-dev.github.io/lilt/apt
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/lilt-archive-keyring.gpg

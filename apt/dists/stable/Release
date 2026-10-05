@@ -1,0 +1,16 @@
+Origin: Lilt
+Label: Lilt
+Suite: stable
+Codename: stable
+Date: Mon, 05 Oct 2026 09:41:36 GMT
+Valid-Until: Sun, 03 Jan 2027 09:41:36 GMT
+Architectures: amd64
+Components: main
+Acquire-By-Hash: yes
+Description: Lilt native volume and media surface for GNOME 50
+SHA256:
+ 1e685fe31a66ef507339536c134ed62f3b5f6f193d2f8b29fd3d559a82e5bb53             1407 main/binary-amd64/Packages
+ cb84eaf4563cb8e1b5d6eb402ab4b3bcb4fa9c48edbfd0f491f942b0ccb570d1              729 main/binary-amd64/Packages.gz
+SHA512:
+ 7765876626d2978b155e816130bf6434a41056cc8f586393aaa3f8d92e299728ea8e5858d4f05b6f53354be3715efb7eecba2fa5c67a78e3a88813d063caac4c             1407 main/binary-amd64/Packages
+ 7af60cdf7bb184c61987b9c8f59f6a3dccc5cf89848a7bfd76fdacb110144a35063c7bb78223ed436eeec1b135e47bb66b9934c89d8e5c43c53bbdba99a91855              729 main/binary-amd64/Packages.gz

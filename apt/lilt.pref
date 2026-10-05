@@ -1,0 +1,7 @@
+Package: lilt gnome-shell-extension-lilt
+Pin: release o=Lilt
+Pin-Priority: 500
+
+Package: *
+Pin: release o=Lilt
+Pin-Priority: -1
