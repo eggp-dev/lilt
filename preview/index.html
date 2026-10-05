@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Lilt · Motion rehearsal</title
+  ><link rel="stylesheet" href="preview.css" />
+  <body>
+    <div class="desktop">
+      <div class="light"></div>
+      <div class="ridge r1"></div>
+      <div class="ridge r2"></div>
+      <div class="ridge r3"></div>
+      <div class="grain"></div>
+    </div>
+    <header>
+      <span class="activities">● ● ●</span
+      ><span>Monday, October 5 <b>14:30</b></span
+      ><span class="system">⌁ &nbsp; ◖)) &nbsp; ▰</span>
+    </header>
+    <main aria-label="Lilt motion rehearsal">
+      <div id="surface" class="surface" aria-live="polite">
+        <div id="compact" class="pane compact">
+          <img src="../tests/fixtures/cover.svg" alt="" />
+          <div class="copy">
+            <strong class="song">Soft landing</strong
+            ><small class="artist">Lilt Sessions</small>
+          </div>
+          <div class="waves"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div id="volume" class="pane volume">
+          <div class="volume-heading">
+            <span id="speaker" class="speaker"></span
+            ><span id="volume-label">Volume</span
+            ><strong id="percentage">64<span>%</span></strong>
+          </div>
+          <div class="track"><div id="fill"></div></div>
+        </div>
+        <div id="media" class="pane media">
+          <div class="media-top">
+            <img src="../tests/fixtures/cover.svg" alt="" />
+            <div class="copy">
+              <strong class="song">Soft landing</strong
+              ><small class="artist">Lilt Sessions</small>
+            </div>
+            <span class="now">Playing</span>
+          </div>
+          <div class="transport">
+            <button id="previous" aria-label="Previous track">◀◀</button
+            ><button id="play" aria-label="Play or pause">Ⅱ</button
+            ><button id="next" aria-label="Next track">▶▶</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <aside>
+      <div class="identity">lilt<span>A quiet moment for sound.</span></div>
+      <p>Room for what matters.<br />Then back to your desktop.</p>
+    </aside>
+    <footer>
+      <div class="caption">
+        <span class="dot"></span
+        ><span id="status"
+          >Motion rehearsal · no system settings are changed</span
+        >
+      </div>
+      <div class="controls">
+        <button id="demo" class="primary">Play sequence <span>↗</span></button
+        ><button id="music">Music <kbd>P</kbd></button
+        ><button id="vol-down" aria-label="Lower volume">−</button
+        ><button id="vol-up" aria-label="Raise volume">＋</button
+        ><button id="mute">Mute <kbd>M</kbd></button
+        ><button id="remove">Remove player</button
+        ><label><input id="reduced" type="checkbox" />Reduce motion</label>
+      </div>
+      <div class="hint">
+        ↑ ↓ Volume &nbsp; · &nbsp; Click the pill for controls &nbsp; · &nbsp;
+        Esc 접기
+      </div>
+    </footer>
+    <script type="module" src="preview.js"></script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+.lilt-surface {
+  background-color: rgba(25, 28, 31, 0.98);
+  background-gradient-direction: vertical;
+  background-gradient-start: rgba(40, 43, 46, 0.98);
+  background-gradient-end: rgba(23, 26, 29, 0.99);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 30px;
+  color: #f1f1eb;
+}
+.lilt-art {
+  border-radius: 13px;
+  background-color: #354146;
+  color: #c8d5cf;
+}
+.lilt-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #eeeee9;
+}
+.lilt-artist {
+  font-size: 10px;
+  color: #b7babc;
+}
+.lilt-wave {
+  color: #d9e2d5;
+}
+.lilt-volume-label {
+  font-size: 13px;
+  color: #dbdcde;
+}
+.lilt-percent {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right;
+  color: #f1f2ed;
+}
+.lilt-track {
+  background-color: rgba(255, 255, 255, 0.11);
+  border-radius: 6px;
+}
+.lilt-fill {
+  background-color: #e7e9df;
+  border-radius: 6px;
+}
+.lilt-now {
+  font-size: 9px;
+  color: #b0b8b7;
+}
+.lilt-control,
+.lilt-close {
+  border-radius: 10px;
+  color: #ebebe7;
+}
+.lilt-control:hover,
+.lilt-close:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+}
+.lilt-control:focus,
+.lilt-close:focus,
+.lilt-compact-hit:focus {
+  box-shadow: inset 0 0 0 2px #dce3d5;
+}
+.lilt-compact-hit {
+  border-radius: 30px;
+}

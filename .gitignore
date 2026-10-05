@@ -1,0 +1,13 @@
+node_modules/
+extension/schemas/gschemas.compiled
+backups/
+dist/
+evidence/
+__pycache__/
+*.pyc
+.DS_Store
+promo/out/
+promo/build/
+promo/.cache/
+promo/public/native-source.mp4
+promo/public/native-volume.png

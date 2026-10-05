@@ -1,0 +1,70 @@
+<p align="center"><img src="assets/mark.svg" width="48" alt="Lilt"></p>
+
+# Lilt
+
+[![Actual Lilt motion, recorded in a test GNOME session](assets/lilt-loop.gif)](assets/lilt-intro.mp4)
+
+**A floating pill for volume and media on GNOME.**
+
+Volume, mute, and now-playing feedback in a quiet surface that expands, settles, and gets out of the way. Repeated volume changes update one display. Playing music stays compact; controls unfold when you need them.
+
+**Early development preview.** Tested in isolated GNOME Shell **50.1** sessions on Ubuntu **26.04.1 / Wayland**. Physical keyboard, audio-device, mixed-DPI, and real lock-screen testing are still pending. This is a native GJS extension, with a separate browser rehearsal for motion design. It has not been reviewed for extensions.gnome.org.
+
+The clip is an actual GNOME capture at its recorded speed, using test inputs and test media. It demonstrates behavior, not long-term stability. [24-second introduction](assets/lilt-intro.mp4) · [Unedited 18-second capture](assets/native-source.mp4) · [Static image](assets/hero.png)
+
+## Try the preview
+
+Review the [tested scope](docs/VALIDATION.md) and [installation and recovery guide](docs/OPERATIONS.md) first. The extension targets GNOME 50 only. Node and Python are development tools; the extension has no npm runtime dependencies.
+
+```sh
+git clone https://github.com/eggp-dev/lilt.git
+cd lilt
+npm test
+python3 scripts/pack.py
+```
+
+The ZIP is created at `dist/lilt@eggp-dev.github.io.shell-extension.zip`. Packaging does **not** install or enable it. You can test it in a disposable GNOME session:
+
+```sh
+bash scripts/test-native.sh
+LILT_MULTI=1 bash scripts/test-native.sh
+```
+
+This requires GNOME 50's `gnome-shell-test-tool`, GJS, Python 3, `glib-compile-schemas`, and a working local graphics stack. The test tool uses private D-Bus and disposable XDG directories. See the [manual install steps](docs/OPERATIONS.md) when you choose to use it on your desktop.
+
+## What it does
+
+- Replaces speaker volume and mute OSDs with one animated surface.
+- Shows MPRIS title, artist, local cover art, and supported playback controls.
+- Returns from a temporary volume display to the current music state.
+- Respects the system animation preference and has its own reduced-motion switch.
+- Restores GNOME's original volume display when replacement is disabled.
+- Hides media in the overview and fullscreen; fullscreen volume uses the standard OSD.
+
+It does not collect notifications, call a notification daemon, control brightness, change audio routing, or install keyboard shortcuts. A key workaround that sends `notify-send` notifications is outside this extension's input path. It needs normal GNOME volume OSD events. No telemetry, account, or network artwork fetching is built into the extension.
+
+Only local PNG/JPEG/WebP covers up to 5 MiB are accepted; other artwork uses a music symbol. Multiple players are selected consistently, preferring a currently playing one. There is no player picker yet.
+
+## Feedback that helps
+
+[Open an issue](https://github.com/eggp-dev/lilt/issues/new?template=bug_report.yml) with your OS, GNOME version, Wayland/X11, monitor scaling, and a short reproduction. Tell us what you expected and what appeared. Please omit private track titles, screenshots, usernames, and full system logs unless you have reviewed them.
+
+There are **48 automated checks**: 13 platform-free, 28 in an isolated native session, and 7 with two virtual monitors. [What those checks establish—and what they do not](docs/VALIDATION.md).
+
+## Develop
+
+```sh
+npm test                 # pure state, motion, geometry, and hook checks
+npm run preview          # http://127.0.0.1:48621/preview/index.html
+npm run pack             # installable ZIP; does not activate it
+```
+
+The browser rehearsal uses test data and never changes real volume or music. Its shared state/spring model is useful for design; it is not proof of native compatibility. The optional [Remotion project](promo/README.md) recreates the video from native source footage.
+
+[Product and motion](docs/PRODUCT.md) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md) · [Operations](docs/OPERATIONS.md) · [Contributing](CONTRIBUTING.md) · [Launch plan](docs/LAUNCH.md)
+
+## License and provenance
+
+[MIT](LICENSE). The source, artwork, wallpaper, and test-media metadata in this repository were created for Lilt. No code was copied from reference extensions. Third-party dependencies retain their own licenses; Remotion is used only by the optional video project.
+
+AI tools assisted implementation, testing, documentation, and promotional drafts. These materials remain subject to maintainer review. This disclosure is not a claim of GNOME extension review approval; maintainers should understand and be able to explain the code before submitting it. See [provenance](docs/PROVENANCE.md).

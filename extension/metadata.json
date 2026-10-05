@@ -1,0 +1,10 @@
+{
+  "uuid": "lilt@eggp-dev.github.io",
+  "name": "Lilt",
+  "description": "A quiet, fluid surface for volume and music. Development preview for GNOME 50.",
+  "shell-version": [
+    "50"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.lilt",
+  "url": "https://github.com/eggp-dev/lilt"
+}

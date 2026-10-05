@@ -1,0 +1,42 @@
+name: Report a preview problem
+description: A reproducible Lilt behavior or compatibility issue.
+title: "[Preview] "
+body:
+  - type: markdown
+    attributes:
+      value: "Please review screenshots and snippets for private content. Do not attach full system logs."
+  - type: input
+    id: environment
+    attributes:
+      label: OS and GNOME Shell version
+      placeholder: Ubuntu 26.04.1, GNOME Shell 50.1
+    validations:
+      required: true
+  - type: input
+    id: display
+    attributes:
+      label: Display protocol and monitor scaling
+      placeholder: Wayland, two monitors, 100% and 150%
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Lilt commit or version
+  - type: textarea
+    id: context
+    attributes:
+      label: Optional minimal context
+      description: Relevant player, competing OSD extension, or a short reviewed error excerpt.
