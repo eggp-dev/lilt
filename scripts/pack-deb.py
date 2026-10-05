@@ -57,7 +57,7 @@ def build():
             f"Package: {PACKAGE}\nVersion: {VERSION}\nArchitecture: all\n"
             "Section: gnome\nPriority: optional\n"
             "Maintainer: Lilt contributors <noreply@github.com>\n"
-            "Depends: gnome-shell (>= 50), gnome-shell (<< 51), gir1.2-adw-1, libglib2.0-bin\n"
+            "Depends: gnome-shell (>= 50), gnome-shell (<< 51), gir1.2-adw-1 (>= 1.4), libglib2.0-bin\n"
             f"Installed-Size: {installed_size}\n"
             "Homepage: https://github.com/eggp-dev/lilt\n"
             "Description: floating volume and media surface for GNOME 50\n"

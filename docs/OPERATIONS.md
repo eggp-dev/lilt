@@ -38,7 +38,7 @@ gnome-extensions enable lilt@eggp-dev.github.io
 gnome-extensions prefs lilt@eggp-dev.github.io
 ```
 
-The preferences switches control volume replacement, media visibility, and reduced motion. Turning off volume replacement restores the original GNOME volume methods immediately. Lilt cannot fix a keyboard binding that sends ordinary notifications, an unavailable audio endpoint, or hardware brightness support.
+Preferences control volume replacement, media visibility, top spacing, display duration, and reduced motion. The Preview button shows a sample without changing sound volume. Turning off volume replacement restores the original GNOME volume methods immediately. Lilt cannot fix a keyboard binding that sends ordinary notifications, an unavailable audio endpoint, or hardware brightness support.
 
 ## Disable and uninstall
 

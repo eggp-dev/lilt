@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 development preview — 2026-10-05
+
+Adds retargetable content transitions, fades for track titles and local covers, configurable top spacing and volume hold time, and a native preferences Preview button. Reduced motion now cancels in-flight transitions. Includes real GTK preference binding checks and updated native footage. Daily-use hardware verification remains pending.
+
 ## 0.1.0 development preview — 2026-10-05
 
 Initial implementation of speaker volume/mute OSD replacement, MPRIS compact and expanded media, retargetable spring motion, reduced motion, native cleanup and OSD restoration. Includes isolated GNOME 50.1 tests, two virtual-monitor checks, a browser motion rehearsal, and native promotional footage. No earlier release history is claimed.

@@ -4,15 +4,17 @@ Recorded 2026-10-05. Environment: Ubuntu 26.04.1 host; GNOME Shell 50.1 running 
 
 ## Confirmed automated checks
 
-**48 passing checks** comprise:
+**59 passing checks** comprise:
 
 | Suite | Count | Coverage |
 | --- | ---: | --- |
-| Node unit suite | 13 | State priority/deadlines, player loss and selection, plain bounded metadata, spring frame-rate independence/retargeting, reduced motion, geometry, GNOME 50 argument parsing, idempotent hooks and failure fallback |
-| Native single-monitor suite | 28 | Loading the packaged extension, `showAll`, one actor across 30 rapid events, no duplicate OSD, expiry, brightness pass-through, private-bus MPRIS discovery and transport, mute, media return, overview, scale 2, actual fullscreen GTK fixture, fullscreen OSD fallback, unlock-dialog lifecycle simulation, immediate reduced motion, player loss, exact hook restoration, actor/timer/signal cleanup, repeated enable |
+| Node unit suite | 15 | State priority/deadlines, player loss and selection, plain bounded metadata, spring frame-rate independence/retargeting, reduced motion, geometry, GNOME 50 argument parsing, idempotent hooks and failure fallback |
+| Native single-monitor suite | 34 | Loading the packaged extension, `showAll`, one actor across 30 rapid events, no duplicate OSD, expiry, brightness pass-through, private-bus MPRIS discovery and transport, mute, media return, overview, scale 2, actual fullscreen GTK fixture, fullscreen OSD fallback, unlock-dialog lifecycle simulation, immediate reduced motion, player loss, exact hook restoration, actor/timer/signal cleanup, repeated enable; configurable spacing/duration, preferences preview, rapid metadata retargeting, cover fade, in-flight reduced motion, and pane cleanup |
 | Native two-monitor suite | 7 | Two headless monitors, `showOne` target and bounds/centering, stale monitor target reset, finite coordinates, single-surface cleanup |
 
 The native test harness installs the built ZIP only into its disposable data directory and removes the temporary session afterward. Disable and restored GNOME OSD were visibly verified there. Raw local logs are intentionally not published because they can contain machine-specific paths. The tests are included to reproduce the evidence.
+
+The GTK preferences fixture adds **3 widget-binding checks** (spacing, duration, and Preview request), with the resulting native preview and position also observed in a separate isolated session. All counts refer to distinct assertions; rerunning the same suite from a Debian payload is not counted again.
 
 ## Simulations and limits
 
@@ -42,4 +44,4 @@ The introduction is 24.000 seconds, 1920 × 1080, H.264, 30 fps (720 frames), wi
 
 ## Debian package
 
-The local `0.1.0~preview1` package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 28 native checks passed again. This does not count as 28 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.
+The local `0.2.0~preview1` package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 34 native checks passed again. This does not count as 34 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.

@@ -65,9 +65,37 @@ export async function run() {
       },
     ],
     [5600, () => app._surface.compactButton.emit("clicked", 1)],
+    [
+      6500,
+      () => {
+        fixture.Metadata["xesam:title"] = new GLib.Variant("s", "Morning tide");
+        fixture.Metadata["mpris:artUrl"] = new GLib.Variant(
+          "s",
+          `file://${root}/tests/fixtures/tide.png`,
+        );
+        exported.emit_property_changed(
+          "Metadata",
+          new GLib.Variant("a{sv}", fixture.Metadata),
+        );
+      },
+    ],
     [7700, () => volume(0.64)],
     [7860, () => volume(0.72)],
     [8020, () => volume(0.8)],
+    [
+      10300,
+      () => {
+        fixture.Metadata["xesam:title"] = new GLib.Variant("s", "Soft landing");
+        fixture.Metadata["mpris:artUrl"] = new GLib.Variant(
+          "s",
+          `file://${root}/tests/fixtures/cover.png`,
+        );
+        exported.emit_property_changed(
+          "Metadata",
+          new GLib.Variant("a{sv}", fixture.Metadata),
+        );
+      },
+    ],
     [11200, () => app._surface.close.emit("clicked", 1)],
     [
       12700,

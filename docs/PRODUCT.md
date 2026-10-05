@@ -12,7 +12,7 @@ Lilt offers a quiet, temporary place for sound feedback. It floats near the uppe
 | Volume | Speaker volume or mute OSD | Temporary gauge; each event replaces the same deadline |
 | Blocked | Overview, fullscreen, or locked/greeter mode | Hide media immediately; let standard OSD handling continue |
 
-Volume takes priority for 1,400 ms after the last input, then returns to the currently valid media state. Paused media receives a 5,000 ms grace period. A removed player cannot reappear from stale state. Music selection favors a playing player and preserves the current selection when possible.
+Volume takes priority for 1,400 ms by default (configurable from 600 to 4,000 ms) after the last input, then returns to the currently valid media state. Paused media receives a 5,000 ms grace period. A removed player cannot reappear from stale state. Music selection favors a playing player and preserves the current selection when possible.
 
 ## Motion and geometry
 
@@ -22,10 +22,10 @@ Volume takes priority for 1,400 ms after the last input, then returns to the cur
 | Damping ratio | 0.9 |
 | Hidden seed | 112 × 32 logical pixels, opacity 0, vertical offset −10 |
 | Compact / volume / media | 272 × 60 / 344 × 96 / 384 × 136 |
-| Position | Monitor horizontal center; top offset max(72 × scale, 8.5% monitor height) |
+| Position | Monitor horizontal center; configurable top spacing × scale, constrained to the monitor |
 | Surface | Charcoal gradient, restrained edge, warm pale text |
 
-An analytic damped spring retains current position and velocity when retargeted. Repeated input does not start a new actor or reset the spring to its starting shape. The timeline stops after settling. Numerical thresholds are 0.015 position and 0.035 velocity. Shape geometry follows the Shell theme scale; true mixed-DPI behavior remains a hardware test item.
+An analytic damped spring retains current position and velocity when retargeted. Repeated input does not start a new actor or reset the spring to its starting shape. The timeline stops after settling. Numerical thresholds are 0.015 position and 0.035 velocity. Incoming content eases into place over 180 ms with a 4-pixel drift; outgoing content fades over 90 ms. Title and local-artwork changes use an 85 ms fade out and 160 ms fade in. Retargeting cancels obsolete callbacks. Shape geometry follows the Shell theme scale; true mixed-DPI behavior remains a hardware test item.
 
 ## Accessibility
 
@@ -43,3 +43,5 @@ Reduced motion snaps geometry and opacity to the final state, with no residual s
 8. Production testing must include physical volume keys, audio devices, mixed DPI, and real lock/unlock before calling these supported.
 
 Brightness, all-notification aggregation, weather, file sharing, network artwork, and a player picker are later work. A visible brightness gauge alone would not establish hardware brightness control.
+
+Top spacing defaults to 72 logical pixels, adjustable from 48 to 240. The preferences Preview button displays a synthetic 64% gauge through settings while the extension is enabled; it does not change the audio backend. It is suppressed in blocked states.

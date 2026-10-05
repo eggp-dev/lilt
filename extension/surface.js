@@ -15,6 +15,7 @@ export class Surface {
     this.mode = "hidden";
     this.monitor = 0;
     this.reduced = false;
+    this.topSpacing = 72;
     this.artSerial = 0;
     this.actor = new St.Widget({
       name: "lilt-surface",
@@ -153,29 +154,53 @@ export class Surface {
     box(this.close, 338, 91, 25, 28);
     this.draw();
   }
-  update(state, mode, monitor, reduced) {
+  update(state, mode, monitor, reduced, topSpacing = 72) {
     this.monitor = monitor;
     this.reduced = reduced;
+    this.topSpacing = topSpacing;
     this.motion.target(mode);
-    if (mode !== this.mode) {
+    if (mode !== this.mode || reduced) {
       for (const [key, pane] of Object.entries(this.panes)) {
         pane.remove_all_transitions();
-        pane.visible = key === mode;
         pane.reactive = false;
         if (key === mode) {
-          pane.opacity = reduced ? 255 : 0;
+          const wasVisible = pane.visible;
+          pane.show();
+          pane.opacity = reduced ? 255 : wasVisible ? pane.opacity : 0;
+          pane.translation_y = reduced
+            ? 0
+            : wasVisible
+              ? pane.translation_y
+              : 4 * this.scale;
           pane.ease({
             opacity: 255,
-            duration: reduced ? 0 : 140,
-            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            translation_y: 0,
+            duration: reduced ? 0 : 180,
+            mode: Clutter.AnimationMode.EASE_OUT_CUBIC,
           });
+        } else if (pane.visible && !reduced && mode !== "hidden") {
+          pane.ease({
+            opacity: 0,
+            translation_y: -3 * this.scale,
+            duration: 90,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            onComplete: () => {
+              if (this.alive) pane.hide();
+            },
+          });
+        } else {
+          pane.hide();
+          pane.opacity = 0;
+          pane.translation_y = 0;
         }
       }
       this.mode = mode;
     }
     const p = state.player;
-    this.cTitle.text = this.mTitle.text = p?.title ?? "";
-    this.cArtist.text = this.mArtist.text = p?.artist ?? "";
+    this.text(this.cTitle, p?.title ?? "");
+    this.text(this.mTitle, p?.title ?? "");
+    this.text(this.cArtist, p?.artist ?? "");
+    this.text(this.mArtist, p?.artist ?? "");
     this.now.text = p?.status === "Playing" ? "Playing" : "Paused";
     this.wave.icon_name =
       p?.status === "Playing"
@@ -190,8 +215,8 @@ export class Surface {
       Next: p?.canNext,
       PlayPause: p?.status === "Playing" ? p?.canPause : p?.canPlay,
     })) {
-      this.buttons[key].reactive = !!allowed;
-      this.buttons[key].can_focus = !!allowed;
+      this.buttons[key].reactive = mode === "media" && !!allowed;
+      this.buttons[key].can_focus = mode === "media" && !!allowed;
       this.buttons[key].opacity = allowed ? 255 : 80;
     }
     this.volumeLabel.text = state.muted ? "Muted" : "Volume";
@@ -213,7 +238,64 @@ export class Surface {
     this.setArt(p?.art ?? "");
     if (mode !== "hidden") this.actor.show();
     this.actor.reactive = mode === "compact" || mode === "media";
+    this.compactButton.reactive = this.compactButton.can_focus =
+      mode === "compact";
+    this.close.reactive = this.close.can_focus = mode === "media";
     this.animate();
+  }
+  text(label, value) {
+    if (this.reduced || !label.get_parent().visible || !label.text) {
+      label.remove_all_transitions();
+      label._liltTarget = value;
+      label.text = value;
+      label.opacity = 255;
+      return;
+    }
+    if (label._liltTarget === value) return;
+    label._liltTarget = value;
+    label.remove_all_transitions();
+    label.ease({
+      opacity: 0,
+      duration: 85,
+      mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+      onComplete: () => {
+        if (!this.alive || label._liltTarget !== value) return;
+        label.text = value;
+        label.ease({
+          opacity: 255,
+          duration: 160,
+          mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+        });
+      },
+    });
+  }
+  artwork(style, serial) {
+    this.artStyle = style;
+    this.artReadySerial = serial;
+    for (const actor of [this.cArt, this.mArt]) {
+      actor.remove_all_transitions();
+      const apply = () => {
+        if (!this.alive || serial !== this.artSerial) return;
+        actor.style = style;
+        actor.gicon = null;
+        actor.icon_name = style ? null : "audio-x-generic-symbolic";
+        actor.ease({
+          opacity: 255,
+          duration: this.reduced ? 0 : 160,
+          mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+        });
+      };
+      if (this.reduced || !actor.get_parent().visible) {
+        apply();
+      } else {
+        actor.ease({
+          opacity: 0,
+          duration: 85,
+          mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+          onComplete: apply,
+        });
+      }
+    }
   }
   setArt(uri) {
     if (uri === this.artUri) return;
@@ -221,11 +303,11 @@ export class Surface {
     const serial = ++this.artSerial;
     this.artCancel?.cancel();
     this.artCancel = new Gio.Cancellable();
-    this.cArt.style = this.mArt.style = null;
-    this.cArt.gicon = this.mArt.gicon = null;
-    this.cArt.icon_name = this.mArt.icon_name = "audio-x-generic-symbolic";
     // Local raster artwork only: never fetch remote content or execute SVGs.
-    if (!/^file:\/\//.test(uri) || !/\.(png|jpe?g|webp)$/i.test(uri)) return;
+    if (!/^file:\/\//.test(uri) || !/\.(png|jpe?g|webp)$/i.test(uri)) {
+      this.artwork(null, serial);
+      return;
+    }
     const file = Gio.File.new_for_uri(uri);
     file.query_info_async(
       "standard::size,standard::type",
@@ -235,24 +317,45 @@ export class Surface {
       (f, result) => {
         try {
           const info = f.query_info_finish(result);
+          if (!this.alive || serial !== this.artSerial) return;
           if (
-            !this.alive ||
-            serial !== this.artSerial ||
             info.get_file_type() !== Gio.FileType.REGULAR ||
             info.get_size() > 5 * 1024 * 1024
-          )
+          ) {
+            this.artwork(null, serial);
             return;
-          this.cArt.icon_name = this.mArt.icon_name = null;
+          }
           const uri = f.get_uri().replace(/"/g, "%22");
-          this.cArt.style =
-            this.mArt.style = `background-image:url("${uri}");background-size:cover;`;
+          this.artwork(
+            `background-image:url("${uri}");background-size:cover;`,
+            serial,
+          );
         } catch {
-          /* Keep the neutral fallback. */
+          if (this.alive && serial === this.artSerial)
+            this.artwork(null, serial);
         }
       },
     );
   }
   animate() {
+    if (this.reduced) {
+      this.timeline?.stop();
+      this.timeline = null;
+      this.motion.advance(0, true);
+      this.bar.advance(0, true);
+      for (const actor of [this.cArt, this.mArt]) {
+        actor.remove_transition("opacity");
+        actor.opacity = 255;
+        if (this.artReadySerial === this.artSerial) {
+          actor.style = this.artStyle;
+          actor.gicon = null;
+          actor.icon_name = this.artStyle ? null : "audio-x-generic-symbolic";
+        }
+      }
+      this.draw();
+      if (this.mode === "hidden") this.actor.hide();
+      return;
+    }
     if (this.timeline) return;
     this.last = GLib.get_monotonic_time();
     this.timeline = new Clutter.Timeline({
@@ -284,6 +387,7 @@ export class Surface {
         v.width,
         v.height,
         this.scale,
+        this.topSpacing,
       );
     if (!p) {
       this.actor.hide();

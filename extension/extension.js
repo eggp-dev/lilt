@@ -45,7 +45,20 @@ export default class LiltExtension extends Extension {
           console.warn("Lilt: OSD failed; using the standard display.");
         },
       );
-      this._connect(this._settings, "changed", () => {
+      this._connect(this._settings, "changed", (_settings, key) => {
+        if (key === "preview-request") {
+          if (!this._blocked()) {
+            this._state.volume(
+              0.64,
+              false,
+              this._now(),
+              1,
+              this._settings.get_double("volume-duration") * 1000,
+            );
+            this._refresh();
+          }
+          return;
+        }
         this._syncHook();
         this._state.media(
           this._settings.get_boolean("show-media")
@@ -124,7 +137,13 @@ export default class LiltExtension extends Extension {
     )
       return false;
     this._monitor = event.monitor;
-    this._state.volume(event.level, event.muted, this._now(), event.maxLevel);
+    this._state.volume(
+      event.level,
+      event.muted,
+      this._now(),
+      event.maxLevel,
+      this._settings.get_double("volume-duration") * 1000,
+    );
     this._refresh();
     return true;
   }
@@ -149,6 +168,7 @@ export default class LiltExtension extends Extension {
       this._state.mode(now),
       this._monitor,
       reduced,
+      this._settings.get_int("top-spacing"),
     );
     const deadline = this._state.deadline(now);
     if (Number.isFinite(deadline))

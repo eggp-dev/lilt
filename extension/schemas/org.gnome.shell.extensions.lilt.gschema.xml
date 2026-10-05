@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><schemalist><schema id="org.gnome.shell.extensions.lilt" path="/org/gnome/shell/extensions/lilt/"><key name="replace-volume-osd" type="b"><default>true</default><summary>Replace the volume OSD</summary></key><key name="show-media" type="b"><default>true</default><summary>Show music from MPRIS players</summary></key><key name="reduced-motion" type="b"><default>false</default><summary>Disable spatial animation</summary></key></schema></schemalist>
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.lilt" path="/org/gnome/shell/extensions/lilt/">
+    <key name="replace-volume-osd" type="b"><default>true</default><summary>Replace the volume OSD</summary></key>
+    <key name="show-media" type="b"><default>true</default><summary>Show music from MPRIS players</summary></key>
+    <key name="reduced-motion" type="b"><default>false</default><summary>Disable spatial animation</summary></key>
+    <key name="top-spacing" type="i"><range min="48" max="240"/><default>72</default><summary>Distance from monitor top in logical pixels</summary></key>
+    <key name="volume-duration" type="d"><range min="0.6" max="4.0"/><default>1.4</default><summary>Seconds to hold volume after the last input</summary></key>
+    <key name="preview-request" type="u"><default>0</default><summary>Sequence number for a local display preview</summary></key>
+  </schema>
+</schemalist>

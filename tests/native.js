@@ -121,6 +121,29 @@ export async function run() {
     app._state.mode(app._now()) === "hidden",
     "Temporary volume expires to hidden",
   );
+  app._settings.set_double("volume-duration", 2.6);
+  app._settings.set_int("top-spacing", 120);
+  app._settings.set_uint(
+    "preview-request",
+    app._settings.get_uint("preview-request") + 1,
+  );
+  await Scripting.sleep(550);
+  check(
+    app._state.mode(app._now()) === "volume" &&
+      app._state.volumeUntil - app._now() > 1900,
+    "Preferences preview honors the custom volume hold duration",
+  );
+  check(
+    Math.abs(
+      app._surface.actor.y -
+        (Main.layoutManager.monitors[app._monitor].y + 120),
+    ) < 1,
+    "Top spacing setting moves the native surface",
+  );
+  app._settings.reset("volume-duration");
+  app._settings.reset("top-spacing");
+  app._state.volumeUntil = 0;
+  app._refresh();
   Main.osdWindowManager.showAll(
     Gio.ThemedIcon.new("display-brightness-symbolic"),
     null,
@@ -189,6 +212,71 @@ export async function run() {
   app._media.control("Previous");
   await waitFor(() => calls === 3);
   check(calls === 3, "Next and Previous reach the private-bus player");
+  fixture.Metadata["xesam:title"] = new GLib.Variant("s", "First change");
+  exported.emit_property_changed(
+    "Metadata",
+    new GLib.Variant("a{sv}", fixture.Metadata),
+  );
+  await Scripting.sleep(40);
+  fixture.Metadata["xesam:title"] = new GLib.Variant("s", "Latest change");
+  exported.emit_property_changed(
+    "Metadata",
+    new GLib.Variant("a{sv}", fixture.Metadata),
+  );
+  await Scripting.sleep(350);
+  check(
+    app._surface.mTitle.text === "Latest change" &&
+      app._surface.mTitle.opacity === 255,
+    "Rapid track changes settle on the latest title without stale callbacks",
+  );
+  fixture.Metadata["mpris:artUrl"] = new GLib.Variant(
+    "s",
+    `file://${root}/tests/fixtures/tide.png`,
+  );
+  exported.emit_property_changed(
+    "Metadata",
+    new GLib.Variant("a{sv}", fixture.Metadata),
+  );
+  await Scripting.sleep(400);
+  check(
+    app._surface.mArt.style?.includes("tide.png") &&
+      app._surface.mArt.opacity === 255,
+    "A new local album cover fades in and reaches full opacity",
+  );
+  fixture.Metadata["mpris:artUrl"] = new GLib.Variant(
+    "s",
+    `file://${root}/tests/fixtures/cover.png`,
+  );
+  fixture.Metadata["xesam:title"] = new GLib.Variant("s", "Soft landing");
+  exported.emit_property_changed(
+    "Metadata",
+    new GLib.Variant("a{sv}", fixture.Metadata),
+  );
+  app._state.expanded = false;
+  app._refresh();
+  await Scripting.sleep(30);
+  app._settings.set_boolean("reduced-motion", true);
+  await Scripting.sleep(30);
+  check(
+    !app._surface.timeline &&
+      app._surface.panes.compact.opacity === 255 &&
+      !app._surface.panes.compact.get_transition("opacity"),
+    "Reduced motion cancels an in-flight content transition immediately",
+  );
+  app._settings.set_boolean("reduced-motion", false);
+  app._state.expanded = true;
+  app._refresh();
+  await Scripting.sleep(30);
+  app._state.expanded = false;
+  app._refresh();
+  await Scripting.sleep(300);
+  check(
+    app._surface.panes.compact.visible &&
+      !app._surface.panes.media.visible &&
+      !app._surface.panes.volume.visible,
+    "Retargeted pane transitions leave only the final content visible",
+  );
+  await Scripting.sleep(250);
   await record(app, icon);
   app._state.expanded = false;
   Main.osdWindowManager.showAll(

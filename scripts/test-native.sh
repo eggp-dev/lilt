@@ -18,6 +18,10 @@ LILT_ARGS=()
 if [[ "${LILT_PROMO:-0}" == 1 ]]; then
     LILT_TEST="$LILT_ROOT/tests/promo.js"
 fi
+if [[ "${LILT_PREFS:-0}" == 1 ]]; then
+    LILT_TEST="$LILT_ROOT/tests/preferences.js"
+    LILT_ARGS=(--extra-filter org.lilt.PreferencesFixture)
+fi
 if [[ "${LILT_MULTI:-0}" == 1 ]]; then
     LILT_TEST="$LILT_ROOT/tests/monitors.js"
     LILT_ARGS=(--wrap "$LILT_ROOT/scripts/extra-monitor.sh")

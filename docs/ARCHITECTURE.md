@@ -7,7 +7,7 @@
 - `hook.js`: GNOME 50 `show` / `showAll` instance adapters. `showOne` delegates through `show`. Only speaker-volume icons are consumed.
 - `surface.js` and `stylesheet.css`: one native St surface and Clutter frame timeline. Chrome does not reserve desktop space.
 - `mpris.js`: session-bus discovery, player property updates, owner loss, and capability-checked transport calls.
-- `prefs.js`: separate GTK/Adwaita preferences process; GTK is never imported into Shell runtime code.
+- `prefs.js` and `preferences.js`: separate GTK/Adwaita preferences process; GTK is never imported into Shell runtime code.
 
 ## Ownership and failure behavior
 

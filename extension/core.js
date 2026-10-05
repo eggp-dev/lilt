@@ -59,11 +59,11 @@ export class SurfaceState {
       this.expanded = false;
     }
   }
-  volume(level, muted, now, maxLevel = 1) {
+  volume(level, muted, now, maxLevel = 1, holdMs = MOTION.volumeHold) {
     this.level = clamp(level, 0, Math.max(1, maxLevel));
     this.muted = muted;
     this.maxLevel = Math.max(1, maxLevel);
-    this.volumeUntil = now + MOTION.volumeHold;
+    this.volumeUntil = now + clamp(holdMs, 600, 4000);
   }
   block(value) {
     this.blocked = value;
@@ -152,14 +152,27 @@ export class SurfaceMotion {
     );
   }
 }
-export function placement(monitors, preferred, width, height, scale = 1) {
+export function placement(
+  monitors,
+  preferred,
+  width,
+  height,
+  scale = 1,
+  topSpacing = 72,
+) {
   const m = monitors[preferred] ?? monitors[0];
   if (!m) return null;
   const safeScale = Math.max(0.5, scale);
   const w = Math.min(width * safeScale, m.width - 24);
   return {
     x: Math.round(m.x + (m.width - w) / 2),
-    y: Math.round(m.y + Math.max(72 * safeScale, m.height * 0.085)),
+    y: Math.round(
+      m.y +
+        Math.min(
+          clamp(topSpacing, 48, 240) * safeScale,
+          Math.max(0, m.height - height * safeScale - 12),
+        ),
+    ),
     width: w,
     height: height * safeScale,
   };

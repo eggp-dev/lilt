@@ -14,6 +14,23 @@ const player = {
   artist: "Artist",
   status: "Playing",
 };
+test("custom hold duration is bounded and retargets from the last input", () => {
+  const s = new SurfaceState();
+  s.volume(0.5, false, 100, 1, 2600);
+  assert.equal(s.mode(2699), "volume");
+  assert.equal(s.mode(2700), "hidden");
+  s.volume(0.6, false, 200, 1, 99999);
+  assert.equal(s.volumeUntil, 4200);
+  s.volume(0.6, false, 300, 1, -1);
+  assert.equal(s.volumeUntil, 900);
+});
+test("custom top spacing scales and keeps the surface on short monitors", () => {
+  const monitors = [{ x: 0, y: 100, width: 1920, height: 1080 }];
+  assert.equal(placement(monitors, 0, 344, 96, 2, 120).y, 340);
+  const short = [{ x: 0, y: 0, width: 640, height: 300 }];
+  const p = placement(short, 0, 344, 136, 1, 240);
+  assert.equal(p.y + p.height, 288);
+});
 test("rapid volume events replace one deadline and return to music", () => {
   const s = new SurfaceState();
   s.media(player, 0);
