@@ -1,6 +1,6 @@
 # Installation, backup, and recovery
 
-For the simplest Ubuntu installation, use the [local .deb with apt](DEBIAN.md). The source/ZIP method below is an alternative; avoid installing both copies of the same UUID.
+For Ubuntu package-name installation, use the [signed APT archive](APT.md). A [local .deb](DEBIAN.md) and the source/ZIP method below are alternatives; avoid installing both copies of the same UUID.
 
 The preview is for GNOME 50. Review the [validation limits](VALIDATION.md). None of the build or test commands activate an extension in your logged-in desktop. Do not install from unreviewed copies of source.
 

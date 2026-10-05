@@ -1,0 +1,43 @@
+name: Prepare APT signing bundle
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Published Lilt release tag
+        required: true
+        default: v0.3.0
+  release:
+    types: [published]
+
+# This job builds public inputs only. No signing secret, Pages write role or OIDC.
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Download published payload and check its release checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LILT_TAG: ${{ inputs.release_tag || github.event.release.tag_name }}
+        run: |
+          python3 -c 'import os,re; assert re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", os.environ["LILT_TAG"])'
+          mkdir -p dist/apt-input
+          gh release download "$LILT_TAG" --repo eggp-dev/lilt --pattern 'lilt_*_all.deb' --pattern SHA256SUMS --dir dist/apt-input
+          (cd dist/apt-input && sha256sum --ignore-missing --check SHA256SUMS)
+          test -f "dist/apt-input/lilt_${LILT_TAG#v}_all.deb"
+      - name: Build and audit unsigned bundle
+        env:
+          LILT_TAG: ${{ inputs.release_tag || github.event.release.tag_name }}
+        run: |
+          python3 tests/apt.test.py "dist/apt-input/lilt_${LILT_TAG#v}_all.deb"
+          python3 scripts/apt_archive.py --deb "dist/apt-input/lilt_${LILT_TAG#v}_all.deb" --site dist/apt-site
+          python3 scripts/verify-apt.py --site dist/apt-site --reject-unsigned
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lilt-apt-signing-bundle
+          path: dist/apt-site/
+          include-hidden-files: true
+          retention-days: 14

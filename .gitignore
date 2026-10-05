@@ -5,6 +5,10 @@ dist/
 evidence/
 __pycache__/
 *.pyc
+apt-signing/
+.gnupg/
+private-keys-v1.d/
+secring.gpg
 .DS_Store
 promo/out/
 promo/build/

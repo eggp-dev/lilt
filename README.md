@@ -14,6 +14,17 @@ The clip is an actual GNOME capture at its recorded speed, using test inputs and
 
 ## Install 0.3.0
 
+For **Ubuntu 26.04 / GNOME 50 / amd64**, add the [signed Lilt APT archive](docs/APT.md) once, then:
+
+```sh
+sudo apt update
+sudo apt install lilt
+```
+
+After registration, `apt upgrade` follows new signed archive versions. The repository key is scoped to Lilt and CI keeps no signing secret. See [setup, verification, updates and removal](docs/APT.md).
+
+Alternatively, install a release file directly:
+
 Download `lilt_0.3.0_all.deb` and `SHA256SUMS` from the [0.3.0 release](https://github.com/eggp-dev/lilt/releases/tag/v0.3.0). Review the [tested scope](docs/VALIDATION.md) first; the Ubuntu package targets GNOME 50 only. In the download directory:
 
 ```sh
@@ -21,7 +32,7 @@ sha256sum --ignore-missing --check SHA256SUMS
 sudo apt install ./lilt_0.3.0_all.deb
 ```
 
-Then enable **Lilt** in GNOME Extensions. A first logout/login may be needed for GNOME to discover it. See [apt installation, updates, and removal](docs/DEBIAN.md). There is no Lilt APT repository yet; installing by package name alone and automatic repository updates are not available. The checksums verify file bytes and are not signatures.
+Then enable **Lilt** in GNOME Extensions. A first logout/login may be needed for GNOME to discover it. See [local package installation, updates, and removal](docs/DEBIAN.md). The checksums on GitHub release files verify file bytes and are not signatures; the separate APT archive authenticates its indexes through signed Release metadata.
 
 The release also includes `lilt@eggp-dev.github.io.shell-extension.zip` for user-level installation. Choose one installation method; a user copy overrides a system package. GitHub's automatic **Source code** archives contain the repository and are different from the installable extension ZIP. See the [0.3.0 notes](docs/RELEASE-0.3.0.md) for changes, verification, and recovery.
 

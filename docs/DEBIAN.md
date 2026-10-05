@@ -1,5 +1,7 @@
 # Install with apt
 
+For package-name installation and repository updates, follow [the signed APT archive setup](APT.md), then use `sudo apt install lilt`. This page covers installing a local release file.
+
 For Ubuntu with GNOME 50, download `lilt_0.3.0_all.deb` from the [0.3.0 GitHub release](https://github.com/eggp-dev/lilt/releases/tag/v0.3.0), then run in the download directory:
 
 ```sh
@@ -18,7 +20,7 @@ If GNOME has not discovered the new extension yet, save your work and log out an
 
 ## Update and remove
 
-For a new downloaded version, disable Lilt, run the same apt install command with the new file, then use a fresh login to load the new code. There is no Lilt APT repository yet; normal `apt upgrade` does not fetch Lilt releases automatically.
+For a new downloaded version, disable Lilt, run the same apt install command with the new file, then use a fresh login to load the new code. To receive updates by package name instead, register [the signed Lilt APT archive](APT.md). A local `.deb` installation alone does not register an archive.
 
 To remove:
 

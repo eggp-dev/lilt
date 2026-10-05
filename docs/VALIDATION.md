@@ -44,6 +44,8 @@ The introduction is 24.000 seconds, 1920 × 1080, H.264, 30 fps (720 frames), wi
 
 ## Debian package
 
+The subsequent signed [APT archive](APT.md) was verified from its actual public HTTPS URL in a disposable APT root: authenticated update, `lilt` candidate 0.3.0, two authenticated downloads, and install simulation with no removals or unrelated upgrades. Eight archive integrity/preservation tests pass, and an unsigned fixture is rejected by normal APT. This is separate from real host installation and the original native checks.
+
 The `0.3.0` release package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 40 native checks passed again. This does not count as 40 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.
 
 ## Liquid contour in 0.3
