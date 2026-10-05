@@ -9,7 +9,7 @@ This is a review draft. No community posts, external messages, telemetry, schedu
 | License | MIT chosen by the project owner |
 | Explainable native source | GJS implementation and architecture documentation; maintainer review required |
 | Test evidence | 13 pure checks + 28 isolated native checks + 7 virtual-monitor checks |
-| Installable package | ZIP loaded by disposable GNOME test tool; clean real-account install/disable/uninstall/re-login still pending |
+| Installable package | ZIP and extracted Debian system layout passed isolated native checks; apt dependency simulation passed; clean real-account install/disable/uninstall/re-login still pending |
 | Core devices | Physical keyboard, audio device, and standard OSD path still pending |
 | Environment | Real lock/unlock and physical mixed-DPI still pending; isolated fullscreen fixture passed |
 | Review assets | 24-second native-based video, 9-second loop, PNG and original mark |

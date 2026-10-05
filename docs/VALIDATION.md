@@ -39,3 +39,7 @@ GNOME 51, X11, and other Linux desktops are not verified. The product remains a 
 ## Published demonstration
 
 The introduction is 24.000 seconds, 1920 × 1080, H.264, 30 fps (720 frames), with no audio stream. Its native portion is an uninterrupted 18-second capture at recorded speed; the remaining six seconds are a title/CTA. The 9-second GIF and WebP repeat the beginning of that same test sequence. All assets use original test artwork. Frames were visually reviewed after rendering. The optional video TypeScript check passed, and its dependency audit reported zero known vulnerabilities at the time of capture.
+
+## Debian package
+
+The local `0.1.0~preview1` package passed APT dependency simulation on the test host: one new package, no upgrades or removals. Two builds produced the same SHA-256. Archive ownership, file checksums, schema syntax, and absence of maintainer scripts were inspected. The extracted system-extension layout and global schema were loaded in a private GNOME session, then the existing 28 native checks passed again. This does not count as 28 additional independent checks or a real host installation. Installation into the live package database remains untested; no administrator operation was performed.

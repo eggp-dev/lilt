@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node tests/core.test.js",
     "preview": "node scripts/preview.mjs",
-    "pack": "python3 scripts/pack.py"
+    "pack": "python3 scripts/pack.py",
+    "pack:deb": "python3 scripts/pack-deb.py"
   },
   "license": "MIT",
   "repository": {

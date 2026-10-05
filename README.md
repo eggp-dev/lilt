@@ -14,7 +14,24 @@ The clip is an actual GNOME capture at its recorded speed, using test inputs and
 
 ## Try the preview
 
-Review the [tested scope](docs/VALIDATION.md) and [installation and recovery guide](docs/OPERATIONS.md) first. The extension targets GNOME 50 only. Node and Python are development tools; the extension has no npm runtime dependencies.
+Review the [tested scope](docs/VALIDATION.md) first. The Ubuntu package targets GNOME 50 only. With a downloaded `lilt.deb`, installation is:
+
+```sh
+sudo apt install ./lilt.deb
+```
+
+Then enable **Lilt** in GNOME Extensions. A first logout/login may be needed for GNOME to discover it. See [apt installation, updates, and removal](docs/DEBIAN.md). There is no Lilt APT repository yet; installing by package name alone and automatic repository updates are not available. The `.deb` can currently be built locally; a public binary release has not been published.
+
+### Build from source
+
+Node and Python are development tools; the extension has no npm runtime dependencies. From a source checkout, build a local Debian package:
+
+```sh
+python3 scripts/pack-deb.py
+sudo apt install ./dist/lilt.deb
+```
+
+For the user-only ZIP and isolated development tests:
 
 ```sh
 git clone https://github.com/eggp-dev/lilt.git
@@ -57,6 +74,7 @@ There are **48 automated checks**: 13 platform-free, 28 in an isolated native se
 npm test                 # pure state, motion, geometry, and hook checks
 npm run preview          # http://127.0.0.1:48621/preview/index.html
 npm run pack             # installable ZIP; does not activate it
+npm run pack:deb         # dist/lilt.deb; does not install it
 ```
 
 The browser rehearsal uses test data and never changes real volume or music. Its shared state/spring model is useful for design; it is not proof of native compatibility. The optional [Remotion project](promo/README.md) recreates the video from native source footage.
