@@ -4,8 +4,10 @@ import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import St from "gi://St";
 import Pango from "gi://Pango";
+import Cairo from "cairo";
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
-import { SurfaceMotion, Spring, clamp, placement } from "./core.js";
+import { SurfaceMotion, Spring, SHAPES, clamp, placement } from "./core.js";
+import { contour, contentVisibility } from "./contour.js";
 
 export class Surface {
   constructor(onExpand, onControl) {
@@ -25,13 +27,18 @@ export class Surface {
       visible: false,
     });
     Main.layoutManager.addChrome(this.actor, { affectsStruts: false });
+    this.body = new St.DrawingArea({ reactive: false });
+    this.actor.add_child(this.body);
+    this.body.connect("repaint", () => this.paint());
+    this.content = new St.Widget({ layout_manager: new Clutter.FixedLayout() });
+    this.actor.add_child(this.content);
     this.panes = {};
     for (const key of ["compact", "volume", "media"]) {
       this.panes[key] = new St.Widget({
         layout_manager: new Clutter.FixedLayout(),
         visible: false,
       });
-      this.actor.add_child(this.panes[key]);
+      this.content.add_child(this.panes[key]);
     }
     this.compactButton = new St.Button({
       style_class: "lilt-compact-hit",
@@ -178,11 +185,11 @@ export class Surface {
             duration: reduced ? 0 : 180,
             mode: Clutter.AnimationMode.EASE_OUT_CUBIC,
           });
-        } else if (pane.visible && !reduced && mode !== "hidden") {
+        } else if (pane.visible && !reduced) {
           pane.ease({
             opacity: 0,
             translation_y: -3 * this.scale,
-            duration: 90,
+            duration: mode === "hidden" ? 70 : 90,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
               if (this.alive) pane.hide();
@@ -195,6 +202,7 @@ export class Surface {
         }
       }
       this.mode = mode;
+      if (mode !== "hidden") this.lastContentMode = mode;
     }
     const p = state.player;
     this.text(this.cTitle, p?.title ?? "");
@@ -215,6 +223,7 @@ export class Surface {
       Next: p?.canNext,
       PlayPause: p?.status === "Playing" ? p?.canPause : p?.canPlay,
     })) {
+      this.buttons[key]._liltAllowed = !!allowed;
       this.buttons[key].reactive = mode === "media" && !!allowed;
       this.buttons[key].can_focus = mode === "media" && !!allowed;
       this.buttons[key].opacity = allowed ? 255 : 80;
@@ -393,15 +402,64 @@ export class Surface {
       this.actor.hide();
       return;
     }
-    this.actor.set_position(p.x, p.y + v.offset * this.scale);
+    this.actor.set_position(
+      p.x + v.shift * this.scale,
+      p.y + v.offset * this.scale,
+    );
     this.actor.set_size(p.width, p.height);
     this.actor.opacity = Math.round(clamp(v.opacity) * 255);
-    for (const pane of Object.values(this.panes))
-      pane.set_clip(0, 0, p.width, p.height);
+    this.body.set_size(p.width, p.height);
+    const shapeKey = [p.width, p.height, v.roundness, v.lag].join(":");
+    if (shapeKey !== this.shapeKey) {
+      this.shapeKey = shapeKey;
+      this.body.queue_repaint();
+    }
+    this.content.set_size(p.width, p.height);
+    this.content.set_clip(0, 0, p.width, p.height);
+    const contentShape =
+      SHAPES[this.mode === "hidden" ? this.lastContentMode : this.mode];
+    const visibility = contentShape ? contentVisibility(v, contentShape) : 0;
+    this.content.opacity = Math.round(255 * visibility);
+    for (const [key, pane] of Object.entries(this.panes)) {
+      pane.set_position(
+        (p.width - SHAPES[key].width * this.scale) / 2,
+        (p.height - SHAPES[key].height * this.scale) / 2,
+      );
+    }
+    const ready = visibility > 0.95 && this.actor.visible;
+    this.actor.reactive = ready && ["compact", "media"].includes(this.mode);
+    this.compactButton.reactive = this.compactButton.can_focus =
+      ready && this.mode === "compact";
+    this.close.reactive = this.close.can_focus = ready && this.mode === "media";
+    for (const button of Object.values(this.buttons))
+      button.reactive = button.can_focus =
+        ready && this.mode === "media" && !!button._liltAllowed;
     this.fill.set_size(
       Math.max(0, clamp(this.bar.value) * 292 * this.scale),
       5 * this.scale,
     );
+  }
+  paint() {
+    const cr = this.body.get_context();
+    const [w, h] = this.body.get_surface_size();
+    const v = this.motion.snapshot();
+    const s = this.scale || 1;
+    cr.scale(s, s);
+    for (const [op, ...points] of contour(w / s, h / s, v.roundness, v.lag)) {
+      if (op === "M") cr.moveTo(...points);
+      else if (op === "C") cr.curveTo(...points);
+      else cr.closePath();
+    }
+    const fill = new Cairo.LinearGradient(0, 0, 0, h / s);
+    fill.addColorStopRGBA(0, 40 / 255, 43 / 255, 46 / 255, 0.99);
+    fill.addColorStopRGBA(1, 23 / 255, 26 / 255, 29 / 255, 0.99);
+    cr.setSource(fill);
+    cr.fillPreserve();
+    cr.setSourceRGBA(1, 1, 1, 0.16);
+    cr.setLineWidth(1);
+    cr.stroke();
+    cr.$dispose();
+    this.paintCount = (this.paintCount ?? 0) + 1;
   }
   hideImmediately() {
     this.timeline?.stop();

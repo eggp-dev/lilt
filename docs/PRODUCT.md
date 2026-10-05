@@ -18,14 +18,17 @@ Volume takes priority for 1,400 ms by default (configurable from 600 to 4,000 ms
 
 | Parameter | Value |
 | --- | --- |
-| Spring mass / stiffness / damping | 1 / 400 / 36 |
-| Damping ratio | 0.9 |
-| Hidden seed | 112 × 32 logical pixels, opacity 0, vertical offset −10 |
+| Spring mass / stiffness | 1 / 400 |
+| Damping | Width 27 on expansion, height 30; exit and numeric feedback 36 |
+| Curvature / slower width echo | Damping 28; echo stiffness 300 |
+| Hidden seed | 2 × 2 logical pixels, opacity 0, vertical offset −6, horizontal shift −18 |
 | Compact / volume / media | 272 × 60 / 344 × 96 / 384 × 136 |
 | Position | Monitor horizontal center; configurable top spacing × scale, constrained to the monitor |
 | Surface | Charcoal gradient, restrained edge, warm pale text |
 
-An analytic damped spring retains current position and velocity when retargeted. Repeated input does not start a new actor or reset the spring to its starting shape. The timeline stops after settling. Numerical thresholds are 0.015 position and 0.035 velocity. Incoming content eases into place over 180 ms with a 4-pixel drift; outgoing content fades over 90 ms. Title and local-artwork changes use an 85 ms fade out and 160 ms fade in. Retargeting cancels obsolete callbacks. Shape geometry follows the Shell theme scale; true mixed-DPI behavior remains a hardware test item.
+An analytic damped spring retains current position and velocity when retargeted. Repeated input does not start a new actor or reset the spring to its starting shape. The timeline stops after settling. Numerical thresholds are 0.015 position and 0.035 velocity. Incoming content eases into place over 180 ms with a 4-pixel drift; outgoing content fades over 90 ms (70 ms on disappearance). Title and local-artwork changes use an 85 ms fade out and 160 ms fade in. Retargeting cancels obsolete callbacks. Shape geometry follows the Shell theme scale; true mixed-DPI behavior remains a hardware test item.
+
+The silhouette is an original cubic Bézier contour drawn with St.DrawingArea/Cairo. A continuous presence mapping lets a round bead form before lateral inflation and gathers the body on exit. A slower width spring changes the curvature of the two ends slightly during motion. Content uses separate actors with translation and opacity only; it is never scaled with the body. The contour stops repainting at rest. See the [reference study and adaptation](LIQUID-MOTION-STUDY.md).
 
 ## Accessibility
 

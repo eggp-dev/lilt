@@ -20,6 +20,20 @@
     </header>
     <main aria-label="Lilt motion rehearsal">
       <div id="surface" class="surface" aria-live="polite">
+        <svg id="body" aria-hidden="true">
+          <defs>
+            <linearGradient id="ink" x2="0" y2="1">
+              <stop stop-color="#282b2e" />
+              <stop offset="1" stop-color="#171a1d" />
+            </linearGradient>
+          </defs>
+          <path
+            id="contour"
+            fill="url(#ink)"
+            stroke="#ffffff29"
+            stroke-width="1"
+          />
+        </svg>
         <div id="compact" class="pane compact">
           <img src="../tests/fixtures/cover.svg" alt="" />
           <div class="copy">

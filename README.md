@@ -10,7 +10,7 @@ Volume, mute, and now-playing feedback in a quiet surface that expands, settles,
 
 **Early development preview.** Tested in isolated GNOME Shell **50.1** sessions on Ubuntu **26.04.1 / Wayland**. Physical keyboard, audio-device, mixed-DPI, and real lock-screen testing are still pending. This is a native GJS extension, with a separate browser rehearsal for motion design. It has not been reviewed for extensions.gnome.org.
 
-The clip is an actual GNOME capture at its recorded speed, using test inputs and test media. It demonstrates behavior, not long-term stability. [24-second introduction](assets/lilt-intro.mp4) · [Unedited 18-second capture](assets/native-source.mp4) · [Static image](assets/hero.png) · [Preferences](assets/native-preferences.png)
+The clip is an actual GNOME capture at its recorded speed, using test inputs and test media. It demonstrates behavior, not long-term stability. [Close-up motion](assets/liquid-closeup.mp4) · [24-second introduction](assets/lilt-intro.mp4) · [Unedited 18-second capture](assets/native-source.mp4) · [Static image](assets/hero.png) · [Preferences](assets/native-preferences.png)
 
 ## Try the preview
 
@@ -52,6 +52,7 @@ This requires GNOME 50's `gnome-shell-test-tool`, GJS, Python 3, `glib-compile-s
 ## What it does
 
 - Replaces speaker volume and mute OSDs with one animated surface.
+- Forms a small droplet, inflates with a restrained recoil, and gathers back into a bead. Text and artwork remain undistorted.
 - Shows MPRIS title, artist, local cover art, and supported playback controls.
 - Returns from a temporary volume display to the current music state.
 - Fades track titles and local artwork as media changes.
@@ -68,7 +69,7 @@ Only local PNG/JPEG/WebP covers up to 5 MiB are accepted; other artwork uses a m
 
 [Open an issue](https://github.com/eggp-dev/lilt/issues/new?template=bug_report.yml) with your OS, GNOME version, Wayland/X11, monitor scaling, and a short reproduction. Tell us what you expected and what appeared. Please omit private track titles, screenshots, usernames, and full system logs unless you have reviewed them.
 
-There are **59 automated checks**: 15 platform-free, 34 in an isolated native session, 7 with two virtual monitors, and 3 GTK preference bindings. [What those checks establish—and what they do not](docs/VALIDATION.md).
+There are **68 automated checks**: 18 platform-free, 40 in an isolated native session, 7 with two virtual monitors, and 3 GTK preference bindings. [What those checks establish—and what they do not](docs/VALIDATION.md).
 
 ## Develop
 

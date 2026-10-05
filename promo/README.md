@@ -35,3 +35,5 @@ ffmpeg -safe 0 -f concat -i evidence/promo-native.concat -vf fps=30 \
 Run those commands from the repository root. The concat manifest uses actual screenshot timestamps; do not change playback speed while describing it as 1×. The harness uses fake MPRIS media and internally generated OSD events in a private GNOME session. Review each new recording for private content before publishing it.
 
 The runtime extension has no Remotion dependency. This optional tooling retains its third-party licenses. The minimal local toolchain passed `npm audit` with zero reported vulnerabilities on 2026-10-05; that is a point-in-time report, not a security guarantee.
+
+For an additional native close-up, use `LILT_CROP=1 LILT_PROMO=1 bash scripts/test-native.sh` and encode `evidence/liquid-native.concat` with FFmpeg. This records a 480 × 180 area directly from the isolated Shell for nine seconds; it is not a browser simulation. Full-frame and area recordings retain the actual capture timestamps. An encoded frame rate does not establish the compositor or screenshot capture rate.

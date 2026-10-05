@@ -107,6 +107,29 @@ export async function run() {
     "Native animation settles at visible full width",
   );
   await screenshot("native-volume");
+  check(
+    app._surface.body instanceof St.DrawingArea && app._surface.paintCount > 0,
+    "Liquid contour paints through native St.DrawingArea on GNOME 50",
+  );
+  app._state.volumeUntil = 0;
+  app._refresh();
+  await Scripting.sleep(90);
+  const duringExit = app._surface.motion.values.width;
+  const beforeReverse = [duringExit.value, duringExit.velocity];
+  Main.osdWindowManager.showAll(icon, null, 0.68, 1);
+  check(
+    duringExit.value === beforeReverse[0] &&
+      duringExit.velocity === beforeReverse[1],
+    "An input during contraction preserves native shape position and velocity",
+  );
+  await Scripting.sleep(650);
+  check(
+    app._surface.actor.visible &&
+      Math.abs(app._surface.actor.width - 344) < 1 &&
+      app._surface.content.opacity === 255 &&
+      app._surface.percent.text === "68%",
+    "Interrupted disappearance returns to one readable current volume surface",
+  );
   for (let i = 0; i < 30; i++) {
     Main.osdWindowManager.showOne(0, icon, null, i / 40, 1);
     await Scripting.sleep(8);
@@ -201,6 +224,20 @@ export async function run() {
     "Real private-bus MPRIS discovery displays compact media",
   );
   await screenshot("native-compact");
+  await waitFor(() => !app._surface.timeline);
+  const paintCount = app._surface.paintCount;
+  await Scripting.sleep(180);
+  check(
+    app._surface.paintCount === paintCount && !app._surface.timeline,
+    "Settled liquid surface stops timeline and Cairo repaints",
+  );
+  check(
+    app._surface.cTitle.scale_x === 1 &&
+      app._surface.cTitle.scale_y === 1 &&
+      app._surface.cArt.scale_x === 1 &&
+      app._surface.cArt.scale_y === 1,
+    "Native title and artwork remain unscaled inside the deforming body",
+  );
   app._state.expanded = true;
   app._refresh();
   await Scripting.sleep(550);
@@ -262,6 +299,12 @@ export async function run() {
       app._surface.panes.compact.opacity === 255 &&
       !app._surface.panes.compact.get_transition("opacity"),
     "Reduced motion cancels an in-flight content transition immediately",
+  );
+  check(
+    app._surface.motion.snapshot().lag === 0 &&
+      app._surface.motion.echo.velocity === 0 &&
+      Object.values(app._surface.motion.values).every((s) => s.velocity === 0),
+    "Reduced motion removes contour lag and stops every spring mid-transition",
   );
   app._settings.set_boolean("reduced-motion", false);
   app._state.expanded = true;

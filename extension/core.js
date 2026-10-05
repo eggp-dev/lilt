@@ -8,10 +8,38 @@ export const MOTION = Object.freeze({
   pausedHold: 5000,
 });
 export const SHAPES = Object.freeze({
-  hidden: { width: 112, height: 32, opacity: 0, offset: -10 },
-  compact: { width: 272, height: 60, opacity: 1, offset: 0 },
-  volume: { width: 344, height: 96, opacity: 1, offset: 0 },
-  media: { width: 384, height: 136, opacity: 1, offset: 0 },
+  hidden: {
+    width: 2,
+    height: 2,
+    presence: 0,
+    offset: -6,
+    shift: -18,
+    roundness: 1,
+  },
+  compact: {
+    width: 272,
+    height: 60,
+    presence: 1,
+    offset: 0,
+    shift: 0,
+    roundness: 1,
+  },
+  volume: {
+    width: 344,
+    height: 96,
+    presence: 1,
+    offset: 0,
+    shift: 0,
+    roundness: 0.78,
+  },
+  media: {
+    width: 384,
+    height: 136,
+    presence: 1,
+    offset: 0,
+    shift: 0,
+    roundness: 0.64,
+  },
 });
 export const clamp = (v, min = 0, max = 1) =>
   Math.max(min, Math.min(max, Number.isFinite(v) ? v : min));
@@ -97,10 +125,12 @@ export class SurfaceState {
 // Exact damped oscillator solution: no frame-rate dependent Euler integration,
 // and retargeting retains both current position and current velocity.
 export class Spring {
-  constructor(value) {
+  constructor(value, damping = MOTION.damping, stiffness = MOTION.stiffness) {
     this.value = value;
     this.velocity = 0;
     this.target = value;
+    this.damping = damping;
+    this.stiffness = stiffness;
   }
   advance(seconds, reduced = false) {
     if (reduced) {
@@ -109,8 +139,8 @@ export class Spring {
       return false;
     }
     const t = clamp(seconds, 0, 0.1),
-      w = Math.sqrt(MOTION.stiffness / MOTION.mass),
-      a = MOTION.damping / (2 * MOTION.mass);
+      w = Math.sqrt(this.stiffness / MOTION.mass),
+      a = this.damping / (2 * MOTION.mass);
     const b = Math.sqrt(w * w - a * a),
       x = this.value - this.target,
       c = (this.velocity + a * x) / b;
@@ -135,21 +165,47 @@ export class SurfaceMotion {
     this.values = Object.fromEntries(
       Object.entries(SHAPES.hidden).map(([k, v]) => [k, new Spring(v)]),
     );
+    // A slower width echo gives the two ends different curvature while moving.
+    // Both oscillators remain continuous when interrupted; no timed phase queue.
+    this.echo = new Spring(SHAPES.hidden.width, 28, 300);
+    this.mode = "hidden";
   }
   target(mode) {
+    this.mode = mode;
     for (const [k, v] of Object.entries(SHAPES[mode]))
       this.values[k].target = v;
+    this.echo.target = SHAPES[mode].width;
+    // An almost critically damped exit can contract all the way to a bead.
+    // Expansion gets one controlled recoil; numeric feedback keeps its own spring.
+    this.values.width.damping = mode === "hidden" ? 36 : 27;
+    this.values.height.damping = mode === "hidden" ? 36 : 30;
+    this.values.roundness.damping = 28;
   }
   advance(dt, reduced = false) {
     let active = false;
     for (const s of Object.values(this.values))
       active = s.advance(dt, reduced) || active;
+    active = this.echo.advance(dt, reduced) || active;
     return active;
   }
   snapshot() {
-    return Object.fromEntries(
+    const v = Object.fromEntries(
       Object.entries(this.values).map(([k, s]) => [k, s.value]),
     );
+    // Bounds are for drawing only: never discard spring momentum on reversal.
+    v.width = Math.max(2, v.width);
+    v.height = Math.max(2, v.height);
+    // Let a bead form before lateral inflation. This continuous mapping also
+    // gathers an exiting body into a round droplet, without a delay or callback.
+    const t = clamp((v.presence - 0.12) / 0.52);
+    const inflation = t * t * (3 - 2 * t);
+    v.width = v.height + (v.width - v.height) * inflation;
+    v.roundness = 1 + (v.roundness - 1) * inflation;
+    v.opacity = clamp(v.presence * 4);
+    v.lag =
+      clamp((this.values.width.value - this.echo.value) / 140, -0.35, 0.35) *
+      inflation;
+    return v;
   }
 }
 export function placement(

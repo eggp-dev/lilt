@@ -5,7 +5,7 @@
 - `core.js`: platform-free state machine, exact spring solution, text normalization, player selection, and placement.
 - `extension.js`: enable/disable lifecycle, settings, Shell signals, deadlines, and policy for fullscreen/overview.
 - `hook.js`: GNOME 50 `show` / `showAll` instance adapters. `showOne` delegates through `show`. Only speaker-volume icons are consumed.
-- `surface.js` and `stylesheet.css`: one native St surface and Clutter frame timeline. Chrome does not reserve desktop space.
+- `surface.js`, `contour.js`, and `stylesheet.css`: one native St surface, an original Cairo contour, independent undistorted content, and a Clutter frame timeline. The same path commands drive SVG in the browser rehearsal. Chrome does not reserve desktop space; Cairo repaints stop at rest.
 - `mpris.js`: session-bus discovery, player property updates, owner loss, and capability-checked transport calls.
 - `prefs.js` and `preferences.js`: separate GTK/Adwaita preferences process; GTK is never imported into Shell runtime code.
 

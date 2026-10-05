@@ -2,9 +2,10 @@
 
 The goal is a small surface that feels precise every time you touch a media key. Features should earn their space. No deadlines or unsupported compatibility promises are implied below.
 
-## Implemented in the 0.2 preview
+## Implemented in the 0.3 preview
 
 - Native speaker volume/mute feedback, merged repeated inputs, MPRIS compact and expanded media, and capability-aware playback controls.
+- Liquid bead/inflation/contraction with native Cairo rendering, continuous interruption handling, and no idle repainting.
 - Retargetable shape motion; incoming and outgoing content transitions; title and local-cover changes fade into place.
 - Top spacing (48–240 logical pixels), volume hold time (0.6–4.0 seconds), and a native preview button that does not change audio volume.
 - Reduced motion that also cancels an in-flight transition, fullscreen/overview fallback, cleanup, and a local apt-installable Debian package.

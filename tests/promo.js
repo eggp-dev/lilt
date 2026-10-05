@@ -12,7 +12,9 @@ export async function run() {
   await Scripting.sleep(700);
   const app = Main.extensionManager.lookup("lilt@eggp-dev.github.io").stateObj;
   if (!app?._surface) throw Error("Lilt did not enable");
-  const output = `${root}/evidence/promo-frames`;
+  const focused = GLib.getenv("LILT_CROP") === "1";
+  const folder = focused ? "liquid-frames" : "promo-frames";
+  const output = `${root}/evidence/${folder}`;
   GLib.mkdir_with_parents(output, 0o755);
   const xml =
     '<node><interface name="org.mpris.MediaPlayer2.Player"><method name="PlayPause"/><method name="Next"/><method name="Previous"/><property name="PlaybackStatus" type="s" access="read"/><property name="Metadata" type="a{sv}" access="read"/><property name="CanPlay" type="b" access="read"/><property name="CanPause" type="b" access="read"/><property name="CanControl" type="b" access="read"/><property name="CanGoNext" type="b" access="read"/><property name="CanGoPrevious" type="b" access="read"/></interface></node>';
@@ -50,6 +52,15 @@ export async function run() {
     [920, () => volume(0.44)],
     [1080, () => volume(0.52)],
     [1240, () => volume(0.6)],
+    // Reverse an actual contracting surface before it disappears.
+    [2800, () => volume(0.64)],
+    [
+      3200,
+      () => {
+        app._state.volumeUntil = 0;
+        app._refresh();
+      },
+    ],
     [
       3600,
       () => {
@@ -119,7 +130,7 @@ export async function run() {
   const frames = [],
     start = GLib.get_monotonic_time();
   let index = 0;
-  while (GLib.get_monotonic_time() - start < 18000000) {
+  while (GLib.get_monotonic_time() - start < (focused ? 9000000 : 18000000)) {
     const tick = GLib.get_monotonic_time();
     while (index < events.length && (tick - start) / 1000 >= events[index][0])
       events[index++][1]();
@@ -130,11 +141,25 @@ export async function run() {
       Gio.FileCreateFlags.NONE,
       null,
     );
-    await new Shell.Screenshot().screenshot(false, stream);
+    if (focused) {
+      const m = Main.layoutManager.primaryMonitor;
+      await new Shell.Screenshot().screenshot_area(
+        m.x + Math.round((m.width - 480) / 2),
+        m.y + 40,
+        480,
+        180,
+        stream,
+      );
+    } else {
+      await new Shell.Screenshot().screenshot(false, stream);
+    }
     stream.close(null);
-    frames.push({ file: `promo-frames/${name}`, time: (tick - start) / 1e6 });
+    frames.push({ file: `${folder}/${name}`, time: (tick - start) / 1e6 });
     await Scripting.sleep(
-      Math.max(1, 33 - (GLib.get_monotonic_time() - tick) / 1000),
+      Math.max(
+        1,
+        (focused ? 16 : 33) - (GLib.get_monotonic_time() - tick) / 1000,
+      ),
     );
   }
   let manifest = "";
@@ -142,7 +167,10 @@ export async function run() {
     manifest += `file '${frame.file}'\nduration ${i + 1 < frames.length ? frames[i + 1].time - frame.time : 0.033}\n`;
   });
   manifest += `file '${frames.at(-1).file}'\n`;
-  GLib.file_set_contents(`${root}/evidence/promo-native.concat`, manifest);
+  GLib.file_set_contents(
+    `${root}/evidence/${focused ? "liquid" : "promo"}-native.concat`,
+    manifest,
+  );
   if (owner) {
     Gio.bus_unown_name(owner);
     exported.unexport();

@@ -3,7 +3,9 @@ import {
   SurfaceMotion,
   Spring,
   clamp,
+  SHAPES,
 } from "../extension/core.js";
+import { contour, contentVisibility } from "../extension/contour.js";
 const $ = (id) => document.getElementById(id),
   state = new SurfaceState(),
   motion = new SurfaceMotion(),
@@ -56,9 +58,26 @@ function frame(now) {
     width: `${v.width}px`,
     height: `${v.height}px`,
     opacity: clamp(v.opacity),
-    transform: `translate(-50%,${v.offset}px)`,
+    transform: `translate(calc(-50% + ${v.shift}px),${v.offset}px)`,
     pointerEvents: v.opacity < 0.05 ? "none" : "auto",
   });
+  $("body").setAttribute("viewBox", `0 0 ${v.width} ${v.height}`);
+  $("contour").setAttribute(
+    "d",
+    contour(v.width, v.height, v.roundness, v.lag)
+      .map((c) => c.join(" "))
+      .join(" "),
+  );
+  const mode = state.mode(now);
+  for (const id of ["compact", "volume", "media"]) {
+    Object.assign($(id).style, {
+      width: `${SHAPES[id].width}px`,
+      height: `${SHAPES[id].height}px`,
+      left: `${(v.width - SHAPES[id].width) / 2}px`,
+      top: `${(v.height - SHAPES[id].height) / 2}px`,
+      opacity: mode === id ? contentVisibility(v, SHAPES[id]) : 0,
+    });
+  }
   $("fill").style.width = `${clamp(bar.value) * 100}%`;
   raf = a || b ? requestAnimationFrame(frame) : 0;
 }

@@ -6,7 +6,9 @@ import {
   selectPlayer,
   placement,
   cleanText,
+  SurfaceMotion,
 } from "../extension/core.js";
+import { contour } from "../extension/contour.js";
 import { OsdHook, volumeEvent } from "../extension/hook.js";
 const player = {
   id: "one",
@@ -14,6 +16,61 @@ const player = {
   artist: "Artist",
   status: "Playing",
 };
+test("liquid motion remains continuous and finite through rapid reversals", () => {
+  const motion = new SurfaceMotion();
+  for (let i = 0; i < 160; i++) {
+    const before = Object.values(motion.values).map((s) => [
+      s.value,
+      s.velocity,
+    ]);
+    motion.target(["volume", "hidden", "media", "compact"][i % 4]);
+    assert.deepEqual(
+      Object.values(motion.values).map((s) => [s.value, s.velocity]),
+      before,
+    );
+    motion.advance(((i % 4) + 1) / 120);
+    const v = motion.snapshot();
+    assert.ok(Object.values(v).every(Number.isFinite));
+    assert.ok(
+      v.width >= 2 && v.height >= 2 && v.opacity >= 0 && v.opacity <= 1,
+    );
+    for (const segment of contour(v.width, v.height, v.roundness, v.lag))
+      assert.ok(segment.slice(1).every(Number.isFinite));
+  }
+  motion.target("hidden");
+  for (let i = 0; i < 240; i++) motion.advance(1 / 120);
+  assert.equal(motion.advance(1 / 120), false);
+  assert.equal(motion.snapshot().opacity, 0);
+});
+test("liquid reduced motion cancels contour lag and every channel", () => {
+  const motion = new SurfaceMotion();
+  motion.target("media");
+  motion.advance(0.07);
+  assert.notEqual(motion.snapshot().lag, 0);
+  assert.equal(motion.advance(0, true), false);
+  assert.equal(motion.snapshot().lag, 0);
+  assert.equal(motion.snapshot().width, 384);
+  for (const s of [...Object.values(motion.values), motion.echo])
+    assert.equal(s.velocity, 0);
+});
+test("liquid path stays within its bounds at bead, pill and card sizes", () => {
+  for (const [w, h] of [
+    [2, 2],
+    [14, 14],
+    [80, 24],
+    [272, 60],
+    [344, 96],
+    [384, 136],
+  ]) {
+    for (const lag of [-0.35, 0, 0.35])
+      for (const round of [0.64, 1, 1.08]) {
+        for (const [, ...points] of contour(w, h, round, lag)) {
+          for (let i = 0; i < points.length; i++)
+            assert.ok(points[i] >= 0 && points[i] <= (i % 2 ? h : w));
+        }
+      }
+  }
+});
 test("custom hold duration is bounded and retargets from the last input", () => {
   const s = new SurfaceState();
   s.volume(0.5, false, 100, 1, 2600);
